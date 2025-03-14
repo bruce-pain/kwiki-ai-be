@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "fastapi-boilerplate"
+name = "kwiki-ai-be"
 version = "0.1.0"
-description = "A simple FastAPI backend boilerplate, based on the HNG FastAPI Boilerplate"
+description = "Kwiki AI Backend"
 authors = ["Franklin Ikeh <ikehfranklin06@gmail.com>"]
 readme = "README.md"
 

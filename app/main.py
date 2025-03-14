@@ -27,10 +27,13 @@ async def lifespan(app: FastAPI):
 limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
-    title="Boilerplate",
-    description="FastAPI Boilerplate Application",
+    title="Kwiki AI API",
+    description="FastAPI backend for Kwiki AI",
     version="1.0.0",
     lifespan=lifespan,
+    docs_url="/v1/docs",
+    redoc_url="/v1/redoc",
+    openapi_url="/v1/openapi.json",
 )
 
 app.state.limiter = limiter
@@ -53,13 +56,13 @@ app.include_router(main_router)
 async def get_root(request: Request) -> dict:
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content={"URL": "", "message": "Welcome to the boilerplate API"},
+        content={"URL": "", "message": "Welcome to the Kwiki AI API"},
     )
 
 
 @app.get("/probe", tags=["Home"])
 async def probe():
-    return {"message": "I am the Python FastAPI API responding"}
+    return {"message": "I am the Kwiki AI API responding"}
 
 
 # REGISTER EXCEPTION HANDLERS
