@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  ci-pipeline:
+    runs-on: ubuntu-latest
+    env:
+      ENV: ${{ secrets.ENV }}
+
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      # Install Poetry
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "export PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          poetry install --with dev --no-root
+
+      - name: Decode and create .env file
+        run: |
+          echo $ENV | base64 -d > .env
+
+      # - name: Run migrations
+      #   run: |
+      #     poetry run alembic upgrade head
+
+      # Run Ruff
+      - name: Run Ruff
+        run: |
+          poetry run ruff check ./app ./tests --output-format=github
+
+      # Run tests
+      - name: Run Pytest
+        run: |
+          poetry run pytest -v --disable-warnings

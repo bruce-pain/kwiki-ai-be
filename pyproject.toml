@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "fastapi-boilerplate"
+version = "0.1.0"
+description = "A simple FastAPI backend boilerplate, based on the HNG FastAPI Boilerplate"
+authors = ["Franklin Ikeh <ikehfranklin06@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = {extras = ["standard"], version = "^0.115.6"}
+uvicorn = "^0.34.0"
+alembic = "^1.14.0"
+itsdangerous = "^2.2.0"
+python-jose = "^3.3.0"
+psycopg2-binary = "^2.9.10"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+pydantic-settings = "^2.7.0"
+uuid7 = "^0.1.0"
+slowapi = "^0.1.0"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.8.3"
+pytest = "^8.3.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
