@@ -7,9 +7,9 @@ client = TestClient(app)
 def test_root():
     response = client.get("/")
     assert response.status_code == status.HTTP_200_OK
-    assert response.json()["message"] == "Welcome to the boilerplate API"
+    assert response.json()["message"] == "Welcome to the Kwiki AI API"
 
 def test_probe():
     response = client.get("/probe")
     assert response.status_code == status.HTTP_200_OK
-    assert response.json()["message"] == "I am the Python FastAPI API responding"
+    assert response.json()["message"] == "I am the Kwiki AI API responding"
