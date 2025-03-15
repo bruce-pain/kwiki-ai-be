@@ -1,6 +1,7 @@
 from typing import Generic, TypeVar, Type, Optional, List
 from sqlalchemy.orm import Session
-from .model import BaseTableModel
+
+from app.core.base.model import BaseTableModel
 
 Model = TypeVar("T", bound=BaseTableModel)
 
@@ -86,7 +87,7 @@ class BaseRepository(Generic[Model]):
         Returns:
             bool: True if the object was successfully deleted, False if the object wasn't found.
         """
-        
+
         obj = self.get(id)
         if obj:
             self.db.delete(obj)
