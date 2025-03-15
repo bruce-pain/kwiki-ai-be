@@ -8,7 +8,7 @@ from app.utils import jwt_helpers
 from app.core.dependencies.security import get_current_user
 
 from app.api.v1.auth import schemas
-from app.api.v1.auth.services import UserService
+from app.api.services.user import UserService
 from app.api.models.user import User
 
 auth = APIRouter(prefix="/auth", tags=["Authentication"])
