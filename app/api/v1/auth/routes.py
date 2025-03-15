@@ -7,7 +7,8 @@ from app.db.database import get_db
 from app.utils import jwt_helpers
 from app.core.dependencies.security import get_current_user
 
-from app.api.v1.auth import schemas, services
+from app.api.v1.auth import schemas
+from app.api.v1.auth.services import UserService
 from app.api.models.user import User
 
 auth = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -33,8 +34,9 @@ def register(
     """
 
     # Create user account
+    service = UserService(db=db)
 
-    user = services.register(db=db, schema=schema)
+    user = service.register(schema=schema)
 
     # Create access and refresh tokens
     access_token = jwt_helpers.create_jwt_token("access", user.id)
@@ -50,7 +52,7 @@ def register(
         data=response_data,
     )
 
-
+    
 @auth.post(
     path="/login",
     status_code=status.HTTP_200_OK,
@@ -70,7 +72,9 @@ def login(
         db (Annotated[Session, Depends): Database session
     """
 
-    user = services.authenticate(db=db, schema=schema)
+    # user = services.authenticate(db=db, schema=schema)
+    service = UserService(db=db)
+    user = service.authenticate(schema=schema)
 
     # Create access and refresh tokens
     access_token = jwt_helpers.create_jwt_token("access", user.id)
