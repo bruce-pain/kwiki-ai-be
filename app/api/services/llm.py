@@ -38,7 +38,7 @@ class LLMService:
     """
 
     SAMPLE_DECK = DeckModel(
-        title="Concise deck title (3-7 words)",
+        name="Concise deck title (3-7 words)",
         description="1-sentence overview of the deck's focus",
         cards=[
             Flashcard(

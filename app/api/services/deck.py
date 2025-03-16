@@ -24,22 +24,24 @@ class DeckService:
         self.repository = DeckRepository(db)
         self.flashcard_service = FlashCardService(db)
 
-    def save_deck(self, deck_model: DeckModel) -> Deck:
+    def save_deck(self, deck_model: DeckModel, user_id: str) -> Deck:
         """
         Save a new deck to the database.
         This method creates a new deck and its associated flashcards if provided.
 
         Args:
             deck_model (DeckModel): The deck model containing the deck data.
+            user_id (str): The ID of the user creating the deck.
 
         Returns:
             Deck: The created deck object.
         """
         new_deck = Deck(
-            title=deck_model.title,
+            name=deck_model.name,
             description=deck_model.description,
+            user_id=user_id,
         )
-        self.repository.create(new_deck)
+        new_deck = self.repository.create(new_deck)
 
         # Create flashcards if provided
         if deck_model.cards:
@@ -47,10 +49,11 @@ class DeckService:
                 self.flashcard_service.create_flashcard(
                     question=card.question,
                     answer=card.answer,
+                    explanation=card.explanation,
                     deck_id=new_deck.id,
                 )
 
-        logger.info(f"Deck created with ID: {new_deck.id} and title: {new_deck.title}")
+        logger.info(f"Deck created with ID: {new_deck.id} and title: {new_deck.name}")
         return new_deck
 
     def get_deck(self, deck_id: str) -> Optional[Deck]:

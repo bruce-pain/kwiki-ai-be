@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.core.base.repository import BaseRepository
-from api.models.flashcard import Flashcard
+from app.api.models.flashcard import Flashcard
 
 class FlashCardRepository(BaseRepository[Flashcard]):
     """

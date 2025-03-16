@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException, status
 
 from app.api.repositories.flashcard import FlashCardRepository
-from app.api.services.deck import DeckService
+from app.api.repositories.deck import DeckRepository
 from app.api.models.flashcard import Flashcard
 from app.utils.logger import logger
 
@@ -14,9 +15,9 @@ class FlashCardService:
 
     def __init__(self, db: Session):
         self.repository = FlashCardRepository(db)
-        self.deck_service = DeckService(db)
+        self.deck_repository = DeckRepository(db)
 
-    def create_flashcard(self, question: str, answer: str, deck_id: str) -> Flashcard:
+    def create_flashcard(self, question: str, answer: str, explanation: str, deck_id: str) -> Flashcard:
         """
         Create a new flashcard.
         Args:
@@ -28,13 +29,24 @@ class FlashCardService:
         """
 
         # Validate deck ID
-        deck = self.deck_service.get_deck(deck_id)
-
-        flashcard = self.repository.create(
-            question=question, answer=answer, deck_id=deck.id
+        deck = self.deck_repository.get(deck_id)
+        if not deck:
+            logger.error(f"Deck with ID {deck_id} not found.")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Deck with ID {deck_id} not found.",
+            )
+        
+        new_flashcard = Flashcard(
+            question=question,
+            answer=answer,
+            explanation=explanation,
+            deck_id=deck.id,
         )
+
+        new_flashcard = self.repository.create(new_flashcard)
 
         logger.info(
-            f"Creating flashcard with ID: {flashcard.id} and question: {flashcard.question} for deck ID: {deck.id}"
+            f"Creating flashcard with ID: {new_flashcard.id} and question: {new_flashcard.question} for deck ID: {deck.id}"
         )
-        return flashcard
+        return new_flashcard
