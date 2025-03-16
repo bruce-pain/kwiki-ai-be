@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     DATABASE_NAME: str
     DATABASE_TYPE: str
 
+    # Groq API configurations
+    GROQ_API_KEY: str
+
     # Directories
     MEDIA_DIR: str = os.path.join(BASE_DIR, "media")
     STATIC_DIR: str = os.path.join(BASE_DIR, "static")

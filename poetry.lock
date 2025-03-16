@@ -169,6 +169,17 @@ wrapt = ">=1.10,<2"
 dev = ["PyTest", "PyTest-Cov", "bump2version (<1)", "setuptools", "tox"]
 
 [[package]]
+name = "distro"
+version = "1.9.0"
+description = "Distro - an OS platform information API"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "distro-1.9.0-py3-none-any.whl", hash = "sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2"},
+    {file = "distro-1.9.0.tar.gz", hash = "sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed"},
+]
+
+[[package]]
 name = "dnspython"
 version = "2.7.0"
 description = "DNS toolkit"
@@ -351,6 +362,25 @@ files = [
 [package.extras]
 docs = ["Sphinx", "furo"]
 test = ["objgraph", "psutil"]
+
+[[package]]
+name = "groq"
+version = "0.19.0"
+description = "The official Python library for the groq API"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "groq-0.19.0-py3-none-any.whl", hash = "sha256:e94a9b97422496c43ea7f81bbd8e083ce82be0f09e89ccf649e8e6f19fe11f06"},
+    {file = "groq-0.19.0.tar.gz", hash = "sha256:f18ad7a307e232628afe2e350c0f0ec7e750bff54a9abceb851cc30c0fe2ab75"},
+]
+
+[package.dependencies]
+anyio = ">=3.5.0,<5"
+distro = ">=1.7.0,<2"
+httpx = ">=0.23.0,<1"
+pydantic = ">=1.9.0,<3"
+sniffio = "*"
+typing-extensions = ">=4.10,<5"
 
 [[package]]
 name = "h11"
@@ -1700,4 +1730,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "155c6acd1ebacbd5789c37924fb6fcd1ef294887e31d43ee5745940fb23fd1eb"
+content-hash = "bfae55558806a1b1ac54bedb1b095af96a03a422af8b497ff4236d227aa8ba5d"

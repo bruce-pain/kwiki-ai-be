@@ -17,6 +17,7 @@ passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 pydantic-settings = "^2.7.0"
 uuid7 = "^0.1.0"
 slowapi = "^0.1.0"
+groq = "^0.19.0"
 
 
 [tool.poetry.group.dev.dependencies]
