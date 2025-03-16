@@ -5,6 +5,7 @@ from app.utils import password_utils
 from app.api.v1.auth import schemas
 from app.api.models.user import User
 from app.api.repositories.user import UserRepository
+from app.utils.logger import logger
 
 
 class UserService:
@@ -35,6 +36,7 @@ class UserService:
 
         user = User(**schema.model_dump())
 
+        logger.info(f"Creating user with username: {user.username} and email: {user.email}")
         return self.repository.create(user)
     
     def authenticate(self, schema: schemas.LoginRequest) -> User:
@@ -59,4 +61,5 @@ class UserService:
                 detail="Invalid password",
             )
 
+        logger.info(f"User authenticated with username: {user.username}")
         return user

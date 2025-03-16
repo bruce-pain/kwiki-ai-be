@@ -8,7 +8,7 @@ class Flashcard(BaseModel):
     explanation: str
 
 
-class Deck(BaseModel):
+class DeckModel(BaseModel):
     title: str
     description: str
     cards: List[Flashcard]

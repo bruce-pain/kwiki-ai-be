@@ -1,6 +1,10 @@
 from sqlalchemy.orm import Session
+
 from app.api.repositories.flashcard import FlashCardRepository
+from app.api.services.deck import DeckService
 from app.api.models.flashcard import Flashcard
+from app.utils.logger import logger
+
 
 class FlashCardService:
     """
@@ -10,6 +14,7 @@ class FlashCardService:
 
     def __init__(self, db: Session):
         self.repository = FlashCardRepository(db)
+        self.deck_service = DeckService(db)
 
     def create_flashcard(self, question: str, answer: str, deck_id: str) -> Flashcard:
         """
@@ -21,6 +26,15 @@ class FlashCardService:
         Returns:
             Flashcard: The created flashcard object.
         """
-        return self.repository.create(
-            question=question, answer=answer, deck_id=deck_id
+
+        # Validate deck ID
+        deck = self.deck_service.get_deck(deck_id)
+
+        flashcard = self.repository.create(
+            question=question, answer=answer, deck_id=deck.id
         )
+
+        logger.info(
+            f"Creating flashcard with ID: {flashcard.id} and question: {flashcard.question} for deck ID: {deck.id}"
+        )
+        return flashcard

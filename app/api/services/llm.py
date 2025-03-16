@@ -1,6 +1,7 @@
 import json
 from groq import Groq
-from app.api.v1.deck.schemas import Deck, Flashcard
+
+from app.api.v1.deck.schemas import DeckModel, Flashcard
 from app.core.config import settings
 from app.utils.logger import logger
 
@@ -36,7 +37,7 @@ class LLMService:
       Explanation: "Chlorophyll specifically captures blue/red light wavelengths while reflecting green light."
     """
 
-    SAMPLE_DECK = Deck(
+    SAMPLE_DECK = DeckModel(
         title="Concise deck title (3-7 words)",
         description="1-sentence overview of the deck's focus",
         cards=[
@@ -60,7 +61,7 @@ class LLMService:
         """
         self.client = client or Groq(api_key=api_key)
 
-    def generate_deck_from_topic(self, topic: str) -> Deck:
+    def generate_deck_from_topic(self, topic: str) -> DeckModel:
         """
         Generate a deck based on a given topic using the Groq API.
         
@@ -102,17 +103,17 @@ class LLMService:
 
             # Validate the JSON output
             parsed_deck = json.loads(json_output)
-            logger.info("Valid JSON output received and parsed.")
+            logger.info("Valid JSON output received from LLM and parsed.")
 
             # Validate the JSON against the Deck model
-            validated_deck = Deck.model_validate(parsed_deck)
-            logger.info("Valid JSON output validated against the Deck model.")
+            validated_deck = DeckModel.model_validate(parsed_deck)
+            logger.info("Parsed JSON output validated against the Deck model.")
             return validated_deck
 
         except json.JSONDecodeError as e:
             logger.error("Invalid JSON output: %s", e)
-            raise ValueError("Invalid JSON output") from e
+            raise ValueError("Invalid JSON output received from LLM") from e
 
         except Exception as e:
             logger.error("Error validating JSON output: %s", e)
-            raise ValueError("Error validating JSON output") from e
+            raise ValueError("Error validating JSON output received from LLM") from e

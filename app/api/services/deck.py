@@ -1,10 +1,12 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from app.api.repositories.deck import DeckRepository
 from app.api.services.flashcard import FlashCardService
 from app.api.models.deck import Deck
-from app.api.v1.deck.schemas import Deck as DeckModel
+from app.api.v1.deck.schemas import DeckModel as DeckModel
+from app.utils.logger import logger
 
 class DeckService:
     """
@@ -48,6 +50,7 @@ class DeckService:
                     deck_id=new_deck.id,
                 )
 
+        logger.info(f"Deck created with ID: {new_deck.id} and title: {new_deck.title}")
         return new_deck
 
     def get_deck(self, deck_id: str) -> Optional[Deck]:
@@ -60,7 +63,15 @@ class DeckService:
         Returns:
             Optional[Deck]: The deck object if found, None otherwise.
         """
-        return self.repository.get(deck_id)
+        deck = self.repository.get(deck_id)
+        if not deck:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Deck with ID {deck_id} not found",
+            )
+
+        logger.info(f"Fetching deck with ID: {deck_id}")
+        return deck
 
     def get_user_decks(self, user_id: str) -> List[Deck]:
         """
@@ -72,7 +83,15 @@ class DeckService:
         Returns:
             List[Deck]: A list of decks belonging to the user.
         """
-        return self.repository.get_user_decks(user_id)
+        decks = self.repository.get_user_decks(user_id)
+        if not decks:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"No decks found for user with ID {user_id}",
+            )
+
+        logger.info(f"Fetching decks for user with ID: {user_id}")
+        return decks
 
     def update_deck(self, deck_id: str, name: str, description: str) -> Optional[Deck]:
         """
@@ -87,11 +106,17 @@ class DeckService:
             Optional[Deck]: The updated deck object if found, None otherwise.
         """
         deck = self.repository.get(deck_id)
-        if deck:
-            deck.name = name
-            deck.description = description
-            return self.repository.update(deck)
-        return None
+        if not deck:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Deck with ID {deck_id} not found",
+            )
+
+        deck.name = name
+        deck.description = description
+
+        logger.info(f"Updating deck with ID: {deck_id} to name: {name} and description: {description}")
+        return self.repository.update(deck)
 
     def delete_deck(self, deck_id: str) -> bool:
         """
@@ -104,7 +129,13 @@ class DeckService:
             bool: True if the deck was deleted, False otherwise.
         """
         deck = self.repository.get(deck_id)
-        if deck:
-            self.repository.delete(deck)
-            return True
-        return False
+        if not deck:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Deck with ID {deck_id} not found",
+            )
+
+        self.repository.delete(deck)
+
+        logger.info(f"Deck with ID: {deck_id} deleted successfully")
+        return True
