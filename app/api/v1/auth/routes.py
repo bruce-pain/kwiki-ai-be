@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from typing import Annotated
 
-from app.core import response_messages
 from app.db.database import get_db
 from app.utils import jwt_helpers
 from app.core.dependencies.security import get_current_user
@@ -46,7 +45,7 @@ def register(
 
     return schemas.AuthResponse(
         status_code=status.HTTP_201_CREATED,
-        message=response_messages.REGISTER_SUCCESSFUL,
+        message="User created successfully",
         access_token=access_token,
         refresh_token=refresh_token,
         data=response_data,
@@ -84,7 +83,7 @@ def login(
 
     return schemas.AuthResponse(
         status_code=status.HTTP_201_CREATED,
-        message=response_messages.REGISTER_SUCCESSFUL,
+        message="User logged in successfully",
         access_token=access_token,
         refresh_token=refresh_token,
         data=response_data,
@@ -112,7 +111,7 @@ def refresh_token(schema: schemas.TokenRefreshRequest):
 
     return schemas.TokenRefreshResponse(
         status_code=status.HTTP_200_OK,
-        message=response_messages.TOKEN_REFRESH_SUCCESSFUL,
+        message="Access token refreshed successfully",
         access_token=token,
     )
 
