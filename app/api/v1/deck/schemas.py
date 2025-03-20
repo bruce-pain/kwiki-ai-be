@@ -19,6 +19,13 @@ class DeckResponseModel(DeckModel):
     id: str
     user_id: str
 
+class ListDeckModel(BaseModel):
+    name: str
+    description: str
+    id: str
+    user_id: str
+
+
 # Request schemas
 class CreateDeckRequest(BaseModel):
     topic: str
@@ -28,4 +35,4 @@ class CreateDeckResponse(BaseResponseModel):
     data: DeckResponseModel
 
 class GetListDeckResponse(BaseResponseModel):
-    data: List[DeckResponseModel]
+    data: List[ListDeckModel]
