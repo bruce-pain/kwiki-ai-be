@@ -34,5 +34,8 @@ class CreateDeckRequest(BaseModel):
 class CreateDeckResponse(BaseResponseModel):
     data: DeckResponseModel
 
+class GetDeckResponse(CreateDeckResponse):
+    pass
+
 class GetListDeckResponse(BaseResponseModel):
     data: List[ListDeckModel]

@@ -9,6 +9,7 @@ from app.api.v1.deck.schemas import (
     # DeckModel,
     CreateDeckRequest,
     CreateDeckResponse,
+    GetDeckResponse,
     GetListDeckResponse,
 )
 
@@ -94,4 +95,37 @@ def get_list_deck(
         status_code=status.HTTP_200_OK,
         message="Decks retrieved successfully",
         data=[deck.to_dict() for deck in decks],
+    )
+
+@deck_router.get(
+    path="/{deck_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=GetDeckResponse,
+    summary="Get deck by ID",
+    description="This endpoint retrieves a deck by its ID",
+    tags=["Deck"],
+)
+def get_deck(
+    deck_id: str,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> GetDeckResponse:
+    """
+    Endpoint for retrieving a deck by its ID
+
+    Args:
+        deck_id (str): ID of the deck to retrieve
+        db (Annotated[Session, Depends]): Database session
+        current_user (Annotated[User, Depends]): Current authenticated user
+
+    Returns:
+        GetDeckResponse: Response schema containing the retrieved deck
+    """
+    deck_service = DeckService(db=db)
+    deck = deck_service.get_deck(deck_id=deck_id)
+
+    return GetDeckResponse(
+        status_code=status.HTTP_200_OK,
+        message="Deck retrieved successfully",
+        data=deck.to_dict(),
     )
