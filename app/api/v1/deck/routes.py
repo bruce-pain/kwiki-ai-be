@@ -11,6 +11,8 @@ from app.api.v1.deck.schemas import (
     CreateDeckResponse,
     GetDeckResponse,
     GetListDeckResponse,
+    UpdateDeckRequest,
+    UpdateDeckResponse,
 )
 
 # from app.api.models.deck import Deck
@@ -129,3 +131,66 @@ def get_deck(
         message="Deck retrieved successfully",
         data=deck.to_dict(),
     )
+
+@deck_router.patch(
+    path="/{deck_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=UpdateDeckResponse,
+    summary="Update deck by ID",
+    description="This endpoint updates a deck by its ID",
+    tags=["Deck"],
+)
+def update_deck(
+    deck_id: str,
+    schema: UpdateDeckRequest,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> UpdateDeckResponse:
+    """
+    Endpoint for updating a deck by its ID
+
+    Args:
+        deck_id (str): ID of the deck to update
+        schema (UpdateDeckRequest): Request schema containing the updated deck data
+        db (Annotated[Session, Depends]): Database session
+        current_user (Annotated[User, Depends]): Current authenticated user
+
+    Returns:
+        UpdateDeckResponse: Response schema containing the updated deck
+    """
+    deck_service = DeckService(db=db)
+    deck = deck_service.update_deck(deck_id=deck_id, schema=schema)
+
+    return UpdateDeckResponse(
+        status_code=status.HTTP_200_OK,
+        message="Deck updated successfully",
+        data=deck.to_dict(),
+    )
+
+@deck_router.delete(
+    path="/{deck_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete deck by ID",
+    description="This endpoint deletes a deck by its ID",
+    tags=["Deck"],
+)
+def delete_deck(
+    deck_id: str,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> None:
+    """
+    Endpoint for deleting a deck by its ID
+
+    Args:
+        deck_id (str): ID of the deck to delete
+        db (Annotated[Session, Depends]): Database session
+        current_user (Annotated[User, Depends]): Current authenticated user
+
+    Returns:
+        None
+    """
+    deck_service = DeckService(db=db)
+    deck_service.delete_deck(deck_id=deck_id)
+
+    return None

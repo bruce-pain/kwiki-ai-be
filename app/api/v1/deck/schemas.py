@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from app.core.base.schema import BaseResponseModel
 
+
 class Flashcard(BaseModel):
     question: str
     answer: str
@@ -15,9 +16,11 @@ class DeckModel(BaseModel):
     description: str
     cards: List[Flashcard]
 
-class DeckResponseModel(DeckModel):
+
+class BaseDeckModel(DeckModel):
     id: str
     user_id: str
+
 
 class ListDeckModel(BaseModel):
     name: str
@@ -30,12 +33,30 @@ class ListDeckModel(BaseModel):
 class CreateDeckRequest(BaseModel):
     topic: str
 
-# Response schemas
-class CreateDeckResponse(BaseResponseModel):
-    data: DeckResponseModel
 
-class GetDeckResponse(CreateDeckResponse):
+class UpdateDeckRequest(BaseModel):
+    name: str | None = None
+    description: str | None = None
+
+
+# Response schemas
+
+
+class BaseDeckResponse(BaseResponseModel):
+    data: BaseDeckModel
+
+
+class CreateDeckResponse(BaseDeckResponse):
     pass
+
+
+class GetDeckResponse(BaseDeckResponse):
+    pass
+
+
+class UpdateDeckResponse(BaseDeckResponse):
+    pass
+
 
 class GetListDeckResponse(BaseResponseModel):
     data: List[ListDeckModel]

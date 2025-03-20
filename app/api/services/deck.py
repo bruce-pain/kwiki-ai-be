@@ -6,7 +6,9 @@ from app.api.repositories.deck import DeckRepository
 from app.api.services.flashcard import FlashCardService
 from app.api.models.deck import Deck
 from app.api.v1.deck.schemas import DeckModel as DeckModel
+from app.api.v1.deck.schemas import UpdateDeckRequest
 from app.utils.logger import logger
+
 
 class DeckService:
     """
@@ -91,14 +93,13 @@ class DeckService:
         logger.info(f"Fetching decks for user with ID: {user_id}")
         return decks
 
-    def update_deck(self, deck_id: str, name: str, description: str) -> Optional[Deck]:
+    def update_deck(self, deck_id: str, schema: UpdateDeckRequest) -> Deck:
         """
         Update an existing deck.
 
         Args:
             deck_id (str): The ID of the deck to update.
-            name (str): The new name of the deck.
-            description (str): The new description of the deck.
+            schema (UpdateDeckRequest): The schema containing the updated deck data.
 
         Returns:
             Optional[Deck]: The updated deck object if found, None otherwise.
@@ -110,10 +111,13 @@ class DeckService:
                 detail=f"Deck with ID {deck_id} not found",
             )
 
-        deck.name = name
-        deck.description = description
+        update_data = schema.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(deck, key, value)
 
-        logger.info(f"Updating deck with ID: {deck_id} to name: {name} and description: {description}")
+        logger.info(
+            f"Updating deck with ID: {deck_id} to name: {deck.name} and description: {deck.description}"
+        )
         return self.repository.update(deck)
 
     def delete_deck(self, deck_id: str) -> bool:
