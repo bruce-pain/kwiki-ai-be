@@ -19,10 +19,13 @@ class DeckResponseModel(DeckModel):
     id: str
     user_id: str
 
-# Request schema for creating a new deck
+# Request schemas
 class CreateDeckRequest(BaseModel):
     topic: str
 
-# Response schema for creating a new deck
+# Response schemas
 class CreateDeckResponse(BaseResponseModel):
     data: DeckResponseModel
+
+class GetListDeckResponse(BaseResponseModel):
+    data: List[DeckResponseModel]

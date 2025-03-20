@@ -87,11 +87,6 @@ class DeckService:
             List[Deck]: A list of decks belonging to the user.
         """
         decks = self.repository.get_user_decks(user_id)
-        if not decks:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"No decks found for user with ID {user_id}",
-            )
 
         logger.info(f"Fetching decks for user with ID: {user_id}")
         return decks
