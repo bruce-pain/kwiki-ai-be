@@ -56,7 +56,7 @@ class DeckService:
         logger.info(f"Deck created with ID: {new_deck.id} and title: {new_deck.name}")
         return new_deck
 
-    def get_deck(self, deck_id: str) -> Optional[Deck]:
+    def get_deck(self, deck_id: str) -> Deck:
         """
         Get a deck by its ID.
 
