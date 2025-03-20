@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List, Optional
+from typing import List
 
 from app.api.repositories.deck import DeckRepository
 from app.api.services.flashcard import FlashCardService
