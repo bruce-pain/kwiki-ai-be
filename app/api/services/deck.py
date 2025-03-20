@@ -137,7 +137,7 @@ class DeckService:
                 detail=f"Deck with ID {deck_id} not found",
             )
 
-        self.repository.delete(deck)
+        self.repository.delete(id=deck.id)
 
         logger.info(f"Deck with ID: {deck_id} deleted successfully")
         return True
