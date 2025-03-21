@@ -58,17 +58,19 @@ class DeckService:
         logger.info(f"Deck created with ID: {new_deck.id} and title: {new_deck.name}")
         return new_deck
 
-    def get_deck(self, deck_id: str) -> Deck:
+    def get_deck(self, deck_id: str, user_id: str) -> Deck:
         """
         Get a deck by its ID.
 
         Args:
             deck_id (str): The ID of the deck.
+            user_id (str): The ID of the user.
+
 
         Returns:
             Optional[Deck]: The deck object if found, None otherwise.
         """
-        deck = self.repository.get(deck_id)
+        deck = self.repository.get_user_deck_by_id(deck_id, user_id)
         if not deck:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -88,12 +90,12 @@ class DeckService:
         Returns:
             List[Deck]: A list of decks belonging to the user.
         """
-        decks = self.repository.get_user_decks(user_id)
+        decks = self.repository.get_all_user_decks(user_id)
 
         logger.info(f"Fetching decks for user with ID: {user_id}")
         return decks
 
-    def update_deck(self, deck_id: str, schema: UpdateDeckRequest) -> Deck:
+    def update_deck(self, deck_id: str, schema: UpdateDeckRequest, user_id: str) -> Deck:
         """
         Update an existing deck.
 
@@ -104,7 +106,7 @@ class DeckService:
         Returns:
             Optional[Deck]: The updated deck object if found, None otherwise.
         """
-        deck = self.repository.get(deck_id)
+        deck = self.repository.get_user_deck_by_id(deck_id, user_id)
         if not deck:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -120,7 +122,7 @@ class DeckService:
         )
         return self.repository.update(deck)
 
-    def delete_deck(self, deck_id: str) -> bool:
+    def delete_deck(self, deck_id: str, user_id: str) -> bool:
         """
         Delete a deck by its ID.
 
@@ -130,7 +132,7 @@ class DeckService:
         Returns:
             bool: True if the deck was deleted, False otherwise.
         """
-        deck = self.repository.get(deck_id)
+        deck = self.repository.get_user_deck_by_id(deck_id, user_id)
         if not deck:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
