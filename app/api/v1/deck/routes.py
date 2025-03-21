@@ -99,6 +99,7 @@ def get_list_deck(
         data=[deck.to_dict() for deck in decks],
     )
 
+
 @deck_router.get(
     path="/{deck_id}",
     status_code=status.HTTP_200_OK,
@@ -124,13 +125,14 @@ def get_deck(
         GetDeckResponse: Response schema containing the retrieved deck
     """
     deck_service = DeckService(db=db)
-    deck = deck_service.get_deck(deck_id=deck_id)
+    deck = deck_service.get_deck(deck_id=deck_id, user_id=current_user.id)
 
     return GetDeckResponse(
         status_code=status.HTTP_200_OK,
         message="Deck retrieved successfully",
         data=deck.to_dict(),
     )
+
 
 @deck_router.patch(
     path="/{deck_id}",
@@ -159,13 +161,16 @@ def update_deck(
         UpdateDeckResponse: Response schema containing the updated deck
     """
     deck_service = DeckService(db=db)
-    deck = deck_service.update_deck(deck_id=deck_id, schema=schema)
+    deck = deck_service.update_deck(
+        deck_id=deck_id, schema=schema, user_id=current_user.id
+    )
 
     return UpdateDeckResponse(
         status_code=status.HTTP_200_OK,
         message="Deck updated successfully",
         data=deck.to_dict(),
     )
+
 
 @deck_router.delete(
     path="/{deck_id}",
@@ -191,6 +196,6 @@ def delete_deck(
         None
     """
     deck_service = DeckService(db=db)
-    deck_service.delete_deck(deck_id=deck_id)
+    deck_service.delete_deck(deck_id=deck_id, user_id=current_user.id)
 
     return None
