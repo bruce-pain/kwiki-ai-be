@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Request
 from sqlalchemy.orm import Session
 from typing import Annotated
 
@@ -21,6 +21,8 @@ from app.api.models.user import User
 from app.api.services.deck import DeckService
 from app.api.services.llm import LLMService
 
+from app.utils.limiter import limiter
+
 deck_router = APIRouter(prefix="/decks", tags=["Deck"])
 
 
@@ -32,10 +34,12 @@ deck_router = APIRouter(prefix="/decks", tags=["Deck"])
     description="This endpoint generates a new deck based on the provided topic and returns the generated deck",
     tags=["Deck"],
 )
+@limiter.limit("2/minute")
 def generate_deck(
     schema: CreateDeckRequest,
     db: Annotated[Session, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
+    request: Request,
 ) -> CreateDeckResponse:
     """Endpoint for generating a new deck based on a topic
 
@@ -47,7 +51,9 @@ def generate_deck(
     Returns:
         CreateDeckResponse: Response schema containing the generated deck
     """
+    
     # Generate deck using LLM
+
     llm_service = LLMService()
     try:
         generated_deck = llm_service.generate_deck_from_topic(topic=schema.topic)

@@ -8,12 +8,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import IntegrityError
 from starlette.middleware.sessions import SessionMiddleware
 
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from app.core.config import settings
 from app.utils.logger import logger
+from app.utils.limiter import limiter
 from app.api.v1 import main_router
 
 
@@ -23,8 +23,6 @@ async def lifespan(app: FastAPI):
     yield
     logger.info("Application shutdown")
 
-
-limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
     title="Kwiki AI API",
