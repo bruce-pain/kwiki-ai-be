@@ -31,3 +31,6 @@ class AuthResponse(BaseResponseModel):
     access_token: str
     refresh_token: str
     data: AuthResponseData
+
+class UserResponse(BaseResponseModel):
+    data: AuthResponseData

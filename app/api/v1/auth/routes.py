@@ -51,7 +51,7 @@ def register(
         data=response_data,
     )
 
-    
+
 @auth.post(
     path="/login",
     status_code=status.HTTP_200_OK,
@@ -116,12 +116,14 @@ def refresh_token(schema: schemas.TokenRefreshRequest):
     )
 
 
-@auth.get("/greet/user")
-def greet(current_user: Annotated[User, Depends(get_current_user)]):
-    """Protected route to greet the current user
+@auth.get("/user")
+def get_user(current_user: Annotated[User, Depends(get_current_user)]):
+    user_schema = schemas.AuthResponseData(
+        id=current_user.id, username=current_user.username
+    )
 
-    Args:
-        current_user (Annotated[User, Depends): The currently logged in user
-    """
-
-    return {"greeting": f"Hello, {current_user.username}!"}
+    return schemas.UserResponse(
+        status_code=status.HTTP_200_OK,
+        message="User Details Retrieved",
+        data=user_schema,
+    )
