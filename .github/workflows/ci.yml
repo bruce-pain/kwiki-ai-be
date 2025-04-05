@@ -38,9 +38,9 @@ jobs:
         run: |
           echo $ENV | base64 -d > .env
 
-      # - name: Run migrations
-      #   run: |
-      #     poetry run alembic upgrade head
+      - name: Run migrations
+        run: |
+          poetry run alembic upgrade head
 
       # Run Ruff
       - name: Run Ruff
