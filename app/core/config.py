@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     # Google clent API configurations
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
+    GOOGLE_REDIRECT_URL: str
 
     # Directories
     MEDIA_DIR: str = os.path.join(BASE_DIR, "media")
