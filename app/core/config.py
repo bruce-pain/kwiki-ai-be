@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     # Groq API configurations
     GROQ_API_KEY: str
 
+    # Google clent API configurations
+    GOOGLE_CLIENT_ID: str
+    GOOGLE_CLIENT_SECRET: str
+
     # Directories
     MEDIA_DIR: str = os.path.join(BASE_DIR, "media")
     STATIC_DIR: str = os.path.join(BASE_DIR, "static")
