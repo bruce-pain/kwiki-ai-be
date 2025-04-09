@@ -137,11 +137,11 @@ async def google_login(request: Request):
     """
 
     return await oauth.google.authorize_redirect(
-        request, redirect_uri=settings.GOOGLE_REDIRECT_URL
+        request, settings.GOOGLE_REDIRECT_URL
     )
 
 
-@auth.post(
+@auth.get(
     path="/google/callback",
     response_model=schemas.AuthResponse,
     summary="Google OAuth2 Callback",
@@ -163,7 +163,7 @@ async def google_callback(request: Request, db: Annotated[Session, Depends(get_d
     try:
         token: OAuth2Token = await oauth.google.authorize_access_token(request)
     except OAuthError as e:
-        return HTTPException(
+        raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Google OAuth error: {e.error}",
         )

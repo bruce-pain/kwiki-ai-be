@@ -10,6 +10,7 @@ from app.api.repositories.user import UserRepository
 from app.utils.logger import logger
 from app.utils.google_oauth import oauth
 
+
 class UserService:
     """
     User service class for handling user-related operations.
@@ -40,7 +41,7 @@ class UserService:
 
         logger.info(f"Creating user with username: {user.username}")
         return self.repository.create(user)
-    
+
     def google_auth(self, token: OAuth2Token) -> User:
         """Authenticates a user using Google OAuth
         Args:
@@ -49,15 +50,12 @@ class UserService:
             User: Authenticated user
         """
         # Get user info from the token
-        try:
-            user_info = oauth.google.parse_id_token(token)
-        except OAuthError as e:
-            logger.error(f"OAuth error: {e}")
+        user_info = token["userinfo"]
+        if not user_info:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid token",
             )
-
         # Check if user with the email already exists
         user = self.repository.get_by_username(user_info["email"])
 
@@ -68,7 +66,7 @@ class UserService:
 
         logger.info(f"User authenticated with email by Google: {user.username}")
         return user
-    
+
     def authenticate(self, schema: schemas.LoginRequest) -> User:
         """Authenticates a registered user
         Args:
