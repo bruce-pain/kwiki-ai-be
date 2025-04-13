@@ -127,16 +127,19 @@ def refresh_token(schema: schemas.TokenRefreshRequest):
     description="This endpoint redirects to Google for OAuth2 login",
     tags=["Authentication"],
 )
-async def google_login(request: Request):
+async def google_login():
     """
-    Endpoint to initiate Google OAuth2 login
-    Args:
-        request (Request): FastAPI request object
+    Endpoint to get Google OAuth2 login URL
     Returns:
-        Redirect to Google OAuth2 login page
+        dict: URL for Google OAuth2 login
     """
+    response = await oauth.google.create_authorization_url(
+        redirect_uri=settings.GOOGLE_REDIRECT_URL,
+    )
 
-    return await oauth.google.authorize_redirect(request, settings.GOOGLE_REDIRECT_URL)
+    return {
+        "url": response["url"],
+    }
 
 
 @auth.get(
@@ -146,9 +149,7 @@ async def google_login(request: Request):
     description="This endpoint handles the callback from Google after OAuth2 login",
     tags=["Authentication"],
 )
-async def google_callback(
-    request: Request, db: Annotated[Session, Depends(get_db)]
-):
+async def google_callback(request: Request, db: Annotated[Session, Depends(get_db)]):
     """
     Endpoint to handle Google OAuth2 callback
 

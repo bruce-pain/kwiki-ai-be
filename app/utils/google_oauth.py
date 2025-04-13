@@ -17,5 +17,7 @@ oauth = OAuth(starlette_config)
 oauth.register(
     name="google",
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    authorize_url="https://accounts.google.com/o/oauth2/v2/auth",
     client_kwargs={"scope": "openid profile email"},
+    redirect_uri=settings.GOOGLE_REDIRECT_URL,
 )
