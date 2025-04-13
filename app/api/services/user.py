@@ -1,6 +1,5 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from authlib.integrations.base_client import OAuthError
 from authlib.oauth2.rfc6749 import OAuth2Token
 
 from app.utils import password_utils
@@ -8,7 +7,6 @@ from app.api.v1.auth import schemas
 from app.api.models.user import User
 from app.api.repositories.user import UserRepository
 from app.utils.logger import logger
-from app.utils.google_oauth import oauth
 
 
 class UserService:

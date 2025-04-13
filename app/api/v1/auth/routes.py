@@ -136,9 +136,7 @@ async def google_login(request: Request):
         Redirect to Google OAuth2 login page
     """
 
-    return await oauth.google.authorize_redirect(
-        request, settings.GOOGLE_REDIRECT_URL
-    )
+    return await oauth.google.authorize_redirect(request, settings.GOOGLE_REDIRECT_URL)
 
 
 @auth.get(
@@ -148,7 +146,9 @@ async def google_login(request: Request):
     description="This endpoint handles the callback from Google after OAuth2 login",
     tags=["Authentication"],
 )
-async def google_callback(request: Request, db: Annotated[Session, Depends(get_db)]):
+async def google_callback(
+    request: Request, db: Annotated[Session, Depends(get_db)]
+):
     """
     Endpoint to handle Google OAuth2 callback
 
