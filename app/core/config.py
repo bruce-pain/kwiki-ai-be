@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str
     ACCESS_TOKEN_EXPIRY: int
     REFRESH_TOKEN_EXPIRY: int
+    FRONTEND_URL: str
 
     # Database configurations
     DATABASE_HOST: str

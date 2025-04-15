@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status, Request, HTTPException
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from typing import Annotated
 from authlib.integrations.base_client import OAuthError
@@ -127,19 +128,18 @@ def refresh_token(schema: schemas.TokenRefreshRequest):
     description="This endpoint redirects to Google for OAuth2 login",
     tags=["Authentication"],
 )
-async def google_login():
+async def google_login(request: Request):
     """
-    Endpoint to get Google OAuth2 login URL
+    Endpoint to initiate Google OAuth2 login
+    Args:
+        request (Request): FastAPI request object
     Returns:
-        dict: URL for Google OAuth2 login
+        Redirect response to Google OAuth2 authorization
     """
-    response = await oauth.google.create_authorization_url(
-        redirect_uri=settings.GOOGLE_REDIRECT_URL,
-    )
 
-    return {
-        "url": response["url"],
-    }
+    return await oauth.google.authorize_redirect(
+        request, redirect_uri=settings.GOOGLE_REDIRECT_URL
+    )
 
 
 @auth.get(
@@ -177,15 +177,8 @@ async def google_callback(request: Request, db: Annotated[Session, Depends(get_d
     access_token = jwt_helpers.create_jwt_token("access", user.id)
     refresh_token = jwt_helpers.create_jwt_token("refresh", user.id)
 
-    response_data = schemas.AuthResponseData(id=user.id, username=user.username)
-
-    return schemas.AuthResponse(
-        status_code=status.HTTP_201_CREATED,
-        message="User created successfully",
-        access_token=access_token,
-        refresh_token=refresh_token,
-        data=response_data,
-    )
+    frontend_redirect_url = f"{settings.FRONTEND_URL}/google/callback?access_token={access_token}&refresh_token={refresh_token}"
+    return RedirectResponse(url=frontend_redirect_url)
 
 
 @auth.get("/user")
