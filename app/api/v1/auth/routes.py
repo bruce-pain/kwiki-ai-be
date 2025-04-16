@@ -181,7 +181,14 @@ async def google_callback(request: Request, db: Annotated[Session, Depends(get_d
     return RedirectResponse(url=frontend_redirect_url)
 
 
-@auth.get("/user")
+@auth.get(
+    path="/user",
+    response_model=schemas.UserResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get user details",
+    description="This endpoint retrieves the details of the logged-in user",
+    tags=["Authentication"],
+)
 def get_user(current_user: Annotated[User, Depends(get_current_user)]):
     user_schema = schemas.AuthResponseData(
         id=current_user.id, username=current_user.username
