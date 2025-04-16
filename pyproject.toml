@@ -18,6 +18,8 @@ pydantic-settings = "^2.7.0"
 uuid7 = "^0.1.0"
 slowapi = "^0.1.0"
 groq = "^0.19.0"
+authlib = "^1.5.2"
+starlette = "^0.46.1"
 
 
 [tool.poetry.group.dev.dependencies]

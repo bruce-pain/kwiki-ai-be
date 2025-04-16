@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str
     ACCESS_TOKEN_EXPIRY: int
     REFRESH_TOKEN_EXPIRY: int
+    FRONTEND_URL: str
 
     # Database configurations
     DATABASE_HOST: str
@@ -26,6 +27,11 @@ class Settings(BaseSettings):
 
     # Groq API configurations
     GROQ_API_KEY: str
+
+    # Google clent API configurations
+    GOOGLE_CLIENT_ID: str
+    GOOGLE_CLIENT_SECRET: str
+    GOOGLE_REDIRECT_URL: str
 
     # Directories
     MEDIA_DIR: str = os.path.join(BASE_DIR, "media")
