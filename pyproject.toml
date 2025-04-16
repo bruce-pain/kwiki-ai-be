@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kwiki-ai-be"
-version = "0.1.0"
+version = "0.1.1"
 description = "Kwiki AI Backend"
 authors = ["Franklin Ikeh <ikehfranklin06@gmail.com>"]
 readme = "README.md"
