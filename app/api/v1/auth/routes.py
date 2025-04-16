@@ -1,14 +1,20 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Request, HTTPException
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from typing import Annotated
+from authlib.integrations.base_client import OAuthError
+from authlib.oauth2.rfc6749 import OAuth2Token
 
 from app.db.database import get_db
 from app.utils import jwt_helpers
+from app.utils.google_oauth import oauth
+from app.core.config import settings
 from app.core.dependencies.security import get_current_user
 
 from app.api.v1.auth import schemas
 from app.api.services.user import UserService
 from app.api.models.user import User
+
 
 auth = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -116,7 +122,73 @@ def refresh_token(schema: schemas.TokenRefreshRequest):
     )
 
 
-@auth.get("/user")
+@auth.get(
+    path="/google",
+    summary="Google OAuth2 Login",
+    description="This endpoint redirects to Google for OAuth2 login",
+    tags=["Authentication"],
+)
+async def google_login(request: Request):
+    """
+    Endpoint to initiate Google OAuth2 login
+    Args:
+        request (Request): FastAPI request object
+    Returns:
+        Redirect response to Google OAuth2 authorization
+    """
+
+    return await oauth.google.authorize_redirect(
+        request, redirect_uri=settings.GOOGLE_REDIRECT_URL
+    )
+
+
+@auth.get(
+    path="/google/callback",
+    response_model=schemas.AuthResponse,
+    summary="Google OAuth2 Callback",
+    description="This endpoint handles the callback from Google after OAuth2 login",
+    tags=["Authentication"],
+)
+async def google_callback(request: Request, db: Annotated[Session, Depends(get_db)]):
+    """
+    Endpoint to handle Google OAuth2 callback
+
+    Args:
+        request (Request): FastAPI request object
+        db (Annotated[Session, Depends): Database session
+
+    Returns:
+        AuthResponse: Response containing access and refresh tokens
+    """
+
+    try:
+        token: OAuth2Token = await oauth.google.authorize_access_token(request)
+    except OAuthError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Google OAuth error: {e.error}",
+        )
+
+    service = UserService(db=db)
+
+    user = service.google_auth(token=token)
+
+    # Create access and refresh tokens
+    access_token = jwt_helpers.create_jwt_token("access", user.id)
+    refresh_token = jwt_helpers.create_jwt_token("refresh", user.id)
+
+    frontend_redirect_url = f"{settings.FRONTEND_URL}/google/callback?access_token={access_token}&refresh_token={refresh_token}"
+    return RedirectResponse(url=frontend_redirect_url)
+
+
+@auth.get(
+    path="/user",
+    response_model=schemas.UserResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get user details",
+    description="This endpoint retrieves the details of the logged-in user",
+    tags=["Authentication"],
+)
 def get_user(current_user: Annotated[User, Depends(get_current_user)]):
     user_schema = schemas.AuthResponseData(
         id=current_user.id, username=current_user.username
