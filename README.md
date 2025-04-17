@@ -1,71 +1,127 @@
-# FastAPI Boilerplate
+# Kwiki AI Backend
 
-## Setup
+A FastAPI backend for Kwiki AI, providing user authentication, flashcard deck generation using LLMs, and CRUD APIs for decks and flashcards.
 
-### Clone your repo
+---
 
-- Clone your repository after creating it with this template.
+## Features
 
-### Start up the FastAPI server
+- User registration, login, and Google OAuth2 authentication
+- JWT-based authentication and token refresh
+- Generate flashcard decks using LLMs (Groq API)
+- CRUD operations for decks and flashcards
+- Rate limiting and robust error handling
+- Alembic-powered migrations for PostgreSQL
+- Modular, production-ready FastAPI structure
 
-- Install Poetry:
+---
+
+## Getting Started
+
+### 1. Clone the Repository
+
+```sh
+git clone https://github.com/bruce-pain/kwiki-ai-be
+cd kwiki-ai-be
+```
+
+### 2. Install Poetry
 
 ```sh
 curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-- Install project dependencies using Poetry:
+### 3. Install Dependencies
 
 ```sh
 poetry install
 ```
 
-- Activate the virtual environment managed by Poetry:
+### 4. Configure Environment Variables
 
-```sh
-poetry shell
-```
-
-- Create a `.env` file by copying the `.env.sample` file:
+Copy the sample environment file and fill in your secrets:
 
 ```sh
 cp .env.sample .env
 ```
 
-- Start the server:
+Edit `.env` and set values for database, secret keys, and API credentials.
+
+### 5. Activate the Virtual Environment
+
+```sh
+poetry shell
+```
+
+### 6. Set Up the Database
+
+- **Create your local PostgreSQL database:**
+
+```sh
+sudo -u <user> psql
+```
+
+```sql
+CREATE DATABASE <database_name>;
+```
+
+- **Run migrations:**
+
+```sh
+alembic upgrade head
+```
+
+---
+
+## Running the Server
+
+Start the FastAPI server:
 
 ```sh
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### Setup database
+API docs available at [http://localhost:8000/v1/docs](http://localhost:8000/v1/docs)
 
-To set up the database, follow the following steps:
+---
 
-- **Create your local database**
+## Development
 
-```bash
-sudo -u <user> psql
-```
+- **Create new migrations after model changes:**
 
-```sql
-CREATE DATABASE database_name;
-```
-
-- **Making migrations**
-
-```bash
-alembic revision --autogenerate -m 'initial migration'
+```sh
+alembic revision --autogenerate -m "Describe your change"
 alembic upgrade head
 ```
 
-- **Adding tables and columns to models**
-  After creating new tables or adding new models, make sure to run:
+- **Import new models in [`app/api/models/__init__.py`](app/api/models/__init__.py) for Alembic to detect them.**
 
-```bash
-alembic revision --autogenerate -m "Migration message"
+---
+
+## Testing
+
+Run tests with:
+
+```sh
+poetry run pytest
 ```
 
-After creating new tables or adding new models, make sure you import the new model properly in the `app/api/models/__init__.py` file.
+---
 
-After importing it in the `__init__.py` file, you don't need to import it in the `/alembic/env.py` file anymore.
+## Project Structure
+
+```
+app/
+  api/           # API routes, models, services, repositories
+  core/          # Core config, base classes, dependencies
+  db/            # Database session and base
+  utils/         # Utility modules (JWT, logging, etc.)
+alembic/         # Database migrations
+tests/           # Unit tests
+```
+
+---
+
+## License
+
+This project is licensed under the Apache 2.0 License. See [LICENSE](LICENSE) for details.
