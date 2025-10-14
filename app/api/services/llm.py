@@ -76,7 +76,7 @@ class LLMService:
         """
         try:
             completion = self.client.chat.completions.create(
-                model="deepseek-r1-distill-llama-70b",
+                model="qwen/qwen3-32b",
                 messages=[
                     {
                         "role": "system",
